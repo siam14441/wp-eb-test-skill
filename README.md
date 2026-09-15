@@ -27,8 +27,25 @@ instructions, optionally with before/after screenshots.
 
 See [wp-eb-reproduce/SKILL.md](wp-eb-reproduce/SKILL.md) for the full argument reference and workflow.
 
-Both skills are strictly read-only against the codebase/site under test: no commits, pushes, or
-file edits other than writing their own reports.
+### [wp-eb-marketing-audit](wp-eb-marketing-audit/)
+
+Audits essential-blocks.com (the Essential Blocks marketing site) for missing or broken marketing
+content: dead demo/doc links per block, doc pages with no embedded tutorial video (or a mismatched
+one), and broken links across the wider site. Cross-references the plugin's own
+`includes/blocks.php` block registry against the live site via a curl-based crawl -- no browser or
+paid API required for the core check -- then produces a markdown report.
+
+- Extracts the canonical block list from `blocks.php` and checks every block's demo/doc URL
+- Resolves stale hardcoded links to their real live page where possible
+- Site-wide broken-link sweep plus non-block feature-doc discovery
+- Checks the plugin's dashboard welcome screen for stale version/video mismatches
+- Read-only against the live site; only ever writes its own report
+
+See [wp-eb-marketing-audit/SKILL.md](wp-eb-marketing-audit/SKILL.md) for the full phased workflow,
+gotchas, and troubleshooting notes.
+
+All three skills are strictly read-only against the codebase/site under test: no commits, pushes,
+or file edits other than writing their own reports.
 
 ## Installation
 
@@ -37,11 +54,12 @@ Copy the skill directory you want into your Claude Code skills folder:
 ```bash
 cp -r wp-eb-test ~/.claude/skills/wp-eb-test
 cp -r wp-eb-reproduce ~/.claude/skills/wp-eb-reproduce
+cp -r wp-eb-marketing-audit ~/.claude/skills/wp-eb-marketing-audit
 ```
 
 ## Usage
 
-Invoke either skill from a Claude Code session, e.g.:
+Invoke a skill from a Claude Code session, e.g.:
 
 ```
 /wp-eb-test
@@ -52,9 +70,12 @@ Invoke either skill from a Claude Code session, e.g.:
 /wp-eb-reproduce report=qa-report.md screenshots=yes
 ```
 
+`wp-eb-marketing-audit` is script-driven rather than argument-driven -- see its SKILL.md for the
+phased command sequence.
+
 ## Configuration
 
-Both skills look for an optional `defaults.json` in the plugin directory for site URL, WP
-credentials, and other run defaults — see the example in
+`wp-eb-test` and `wp-eb-reproduce` look for an optional `defaults.json` in the plugin directory for
+site URL, WP credentials, and other run defaults — see the example in
 [wp-eb-test/SKILL.md](wp-eb-test/SKILL.md). This file is local-only and should never be
 committed; credentials are otherwise asked for interactively when needed.
